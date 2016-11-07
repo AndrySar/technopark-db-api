@@ -3,7 +3,7 @@ students.py
 student_groups.py
 tests/test.py
 tests/test.log
-idea/
+.idea/
 target/
 technopark-db-api.iml
 
