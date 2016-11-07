@@ -3,9 +3,9 @@ students.py
 student_groups.py
 tests/test.py
 tests/test.log
-.idea/
 target/
 technopark-db-api.iml
+.idea/
 
 *.py[cod]
 
