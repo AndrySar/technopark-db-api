@@ -42,6 +42,14 @@ public class ForumController extends BaseController {
         return new Response(dbService.listPostsForum(forum, since, limit, order, related));
     }
 
+    @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
+    public Response listUsers(@RequestParam(value = "forum", required = true) String forum,
+                              @RequestParam(value = "since_id", required = false) Long sinceId,
+                              @RequestParam(value = "limit", required = false) Long limit,
+                              @RequestParam(value = "order", required = false) String order) {
+        return new Response(dbService.listUsersForum(forum, sinceId, limit, order));
+    }
+
     @RequestMapping(value = "/listThreads", method = RequestMethod.GET)
     public Response listThreads(@RequestParam(value = "forum", required = true) String forum,
                                     @RequestParam(value = "since", required = false) String since,
@@ -49,13 +57,5 @@ public class ForumController extends BaseController {
                                     @RequestParam(value = "order", required = false) String order,
                                     @RequestParam(value = "related", required = false) String[] related){
         return new Response(dbService.listThreadsForum(forum, since, limit, order, related));
-    }
-
-    @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
-    public Response listUsers(@RequestParam(value = "forum", required = true) String forum,
-                                  @RequestParam(value = "since_id", required = false) Long sinceId,
-                                  @RequestParam(value = "limit", required = false) Long limit,
-                                  @RequestParam(value = "order", required = false) String order) {
-        return new Response(dbService.listUsersForum(forum, sinceId, limit, order));
     }
 }
