@@ -50,7 +50,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
                 ps.setString(4, user.getName());
                 ps.setString(5, user.getUsername());
                 ps.executeUpdate();
-                LOGGER.info(ps.toString());
+                // LOGGER.info(ps.toString());
                 try (ResultSet resultSet = ps.getGeneratedKeys()) {
                     resultSet.next();
                     user.setId(resultSet.getLong(1));
@@ -81,7 +81,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
                 ps.setString(1, email);
                 try (ResultSet resultSet = ps.executeQuery()) {
                     resultSet.next();
-                    user = new User(resultSet);
+                    user = new User(resultSet, false);
                 } catch (Exception e) {
                     return new DBResponse(Status.NOT_FOUND);
                 }
@@ -207,7 +207,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
                 ps.setString(1, email);
                 try (ResultSet resultSet = ps.executeQuery()) {
                     while (resultSet.next()) {
-                        followers.add(new User(resultSet));
+                        followers.add(new User(resultSet, false));
                     }
                 }
             } catch (SQLException e) {
@@ -262,7 +262,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
                 ps.setString(1, email);
                 try (ResultSet resultSet = ps.executeQuery()) {
                     while (resultSet.next()) {
-                        followers.add(new User(resultSet));
+                        followers.add(new User(resultSet, false));
                     }
                 }
             } catch (SQLException e) {

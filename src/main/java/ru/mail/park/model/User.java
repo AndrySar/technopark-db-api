@@ -3,6 +3,7 @@ package ru.mail.park.model;
 import com.google.gson.JsonObject;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Created by Andry on 06.11.16.
@@ -43,17 +44,14 @@ public class User {
     }
 
     public User(JsonObject object) {
-
-        id = object.has(ID_COLUMN) ? object.get(ID_COLUMN).getAsInt() : 0;
-        email = object.get(EMAIL_COLUMN).getAsString();
-        isAnonymous = object.has(ISANONYMOUS_COLUMN) && object.get(ISANONYMOUS_COLUMN).getAsBoolean();
-
         try {
             about = object.get(ABOUT_COLUMN).getAsString();
         } catch (Exception e) {
             about = null;
         }
-
+        email = object.get(EMAIL_COLUMN).getAsString();
+        id = object.has(ID_COLUMN) ? object.get(ID_COLUMN).getAsInt() : 0;
+        isAnonymous = object.has(ISANONYMOUS_COLUMN) && object.get(ISANONYMOUS_COLUMN).getAsBoolean();
         try {
             name = object.get(NAME_COLUMN).getAsString();
         } catch (Exception e) {
@@ -66,8 +64,42 @@ public class User {
         }
     }
 
-    public User(ResultSet resultSet) throws Exception {
+//    public User(ResultSet resultSet) throws Exception {
+//
+//        about = resultSet.getString(ABOUT_COLUMN);
+//        email = resultSet.getString(EMAIL_COLUMN);
+//        id = resultSet.getLong(ID_COLUMN);
+//        isAnonymous = resultSet.getBoolean(ISANONYMOUS_COLUMN);
+//        name = resultSet.getString(NAME_COLUMN);
+//        username = resultSet.getString(USERNAME_COLUMN);
+//
+//        final String tempFollowers = resultSet.getString(FOLLOWERS_COLUMN);
+//        if (tempFollowers != null) {
+//            this.followers = tempFollowers.split(COMMA);
+//        } else {
+//            this.followers = new String[]{};
+//        }
+//
+//        final String tempFollowing = resultSet.getString(FOLLOWING_COLUMN);
+//        if (tempFollowing != null) {
+//            this.following = tempFollowing.split(COMMA);
+//        } else {
+//            this.following = new String[]{};
+//        }
+//
+//        final String tempSubscriptions = resultSet.getString(SUBSCRIPTIONS_COLUMN);
+//        if (tempSubscriptions != null) {
+//            final String[] userSubs = tempSubscriptions.split(COMMA);
+//            this.subscriptions = new Integer[userSubs.length];
+//            for (int i = 0; i < userSubs.length; i++) {
+//                this.subscriptions[i] = Integer.parseInt(userSubs[i]);
+//            }
+//        } else {
+//            this.subscriptions = new Integer[]{};
+//        }
+//    }
 
+    public User(ResultSet resultSet, boolean additional) throws SQLException {
         about = resultSet.getString(ABOUT_COLUMN);
         email = resultSet.getString(EMAIL_COLUMN);
         id = resultSet.getLong(ID_COLUMN);
@@ -75,6 +107,12 @@ public class User {
         name = resultSet.getString(NAME_COLUMN);
         username = resultSet.getString(USERNAME_COLUMN);
 
+        if (additional) {
+            setAdditionalInfo(resultSet);
+        }
+    }
+
+    public void setAdditionalInfo(ResultSet resultSet) throws SQLException {
         final String tempFollowers = resultSet.getString(FOLLOWERS_COLUMN);
         if (tempFollowers != null) {
             this.followers = tempFollowers.split(COMMA);

@@ -409,7 +409,7 @@ public class ThreadServiceImpl extends BaseServiceImpl implements IThreadService
             if (sort.equals("tree")) {
                 StringBuilder query = new StringBuilder();
                 if (order == null || order.equals("desc")) {
-                    System.out.println("TREE SORT DESC START");
+                    // System.out.println("TREE SORT DESC START");
                     query.append("SELECT patch FROM Post WHERE thread = ? ");
 
                     if (since != null) {
@@ -438,10 +438,6 @@ public class ThreadServiceImpl extends BaseServiceImpl implements IThreadService
                         return handeSQLException(e);
                     }
 
-                    System.out.println("PATCHES: ");
-                    for (int i = 0; i < patches.size(); i++) {
-                        System.out.println(patches.get(i) + ",");
-                    }
 
                     if (limit != null) {
                         for (int i = 0; i < patches.size() && posts.size() < limit; i++) {
@@ -452,7 +448,7 @@ public class ThreadServiceImpl extends BaseServiceImpl implements IThreadService
                             unionQuery.append("%' ORDER BY patch ASC LIMIT ");
                             unionQuery.append(currentLimit);
 
-                            System.out.println(unionQuery);
+                            // System.out.println(unionQuery);
 
                             try (PreparedStatement ps = connection.prepareStatement(unionQuery.toString())) {
                                 ps.setLong(1, threadId);
@@ -501,7 +497,7 @@ public class ThreadServiceImpl extends BaseServiceImpl implements IThreadService
             }
 
             if (sort.equals("parent_tree")) {
-                System.out.println("PARENT TREE SORT START");
+                // System.out.println("PARENT TREE SORT START");
                 StringBuilder query = new StringBuilder("SELECT patch FROM Post WHERE thread = ? ");
 
                 if (since != null) {
@@ -539,10 +535,7 @@ public class ThreadServiceImpl extends BaseServiceImpl implements IThreadService
                 } catch (SQLException e) {
                     return handeSQLException(e);
                 }
-                System.out.println("PATCHES: ");
-                for (int i = 0; i < patches.size(); i++) {
-                    System.out.println(patches.get(i) + ",");
-                }
+
 
                 for (int i = 0; i < patches.size(); i++) {
                     StringBuilder unionQuery = new StringBuilder();
@@ -550,7 +543,6 @@ public class ThreadServiceImpl extends BaseServiceImpl implements IThreadService
                     unionQuery.append(patches.get(i));
                     unionQuery.append("%' ORDER BY patch ASC");
 
-                    System.out.println(unionQuery);
 
                     try (PreparedStatement ps = connection.prepareStatement(unionQuery.toString())) {
                         ps.setLong(1, threadId);
@@ -564,11 +556,6 @@ public class ThreadServiceImpl extends BaseServiceImpl implements IThreadService
                     }
                 }
 
-                System.out.println("POST PATCHES: ");
-                for (int i = 0; i < posts.size(); i++) {
-                    System.out.println(posts.get(i).getPatch() + ",");
-                }
-                System.out.println("PARENT TREE SORT END");
             }
         } catch (Exception e) {
             return new DBResponse(Status.INVALID_REQUEST);

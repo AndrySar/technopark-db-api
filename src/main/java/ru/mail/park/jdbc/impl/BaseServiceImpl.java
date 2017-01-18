@@ -39,6 +39,9 @@ public class BaseServiceImpl implements IBaseService {
                 if (tableName == "Thread") {
                     ps.execute("TRUNCATE TABLE Subscriptions");
                 }
+                if (tableName == "Post") {
+                    ps.execute("TRUNCATE TABLE UsersOfForum");
+                }
                 ps.execute("SET FOREIGN_KEY_CHECKS = 1;");
             }
 

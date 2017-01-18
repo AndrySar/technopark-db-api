@@ -40,8 +40,6 @@ public class PostServiceImpl extends BaseServiceImpl implements IPostService {
 
     @Override
     public DBResponse create(String jsonString) {
-        //System.out.println("Создаём Post");
-        //System.out.println(jsonString);
         final Post post;
         try (Connection connection = ds.getConnection()) {
             post = new Post(new JsonParser().parse(jsonString).getAsJsonObject());
@@ -53,20 +51,21 @@ public class PostServiceImpl extends BaseServiceImpl implements IPostService {
                         .append(" WHERE id = ?").toString();
                 try (PreparedStatement ps = connection.prepareStatement(query)) {
                     ps.setLong(1, post.getParent());
-                    LOGGER.info(ps.toString());
+                    //
+                    // LOGGER.info(ps.toString());
                     try (ResultSet resultSet = ps.executeQuery()) {
                         resultSet.next();
                         parentPatch = resultSet.getString("patch");
                     }
                 }
             }
-            System.out.println("Получили parentPatch = " + parentPatch);
+            // System.out.println("Получили parentPatch = " + parentPatch);
 
             StringBuilder buildedQuery = new StringBuilder("SELECT MAX(patch) AS Max_patch FROM ")
                     .append(tableName)
                     .append(" WHERE thread = ? AND patch LIKE '");
             if (!parentPatch.equals("")) {
-                System.out.println("parentPatch != null");
+                // System.out.println("parentPatch != null");
                 buildedQuery.append(parentPatch);
             }
             buildedQuery.append("____'");
@@ -79,17 +78,17 @@ public class PostServiceImpl extends BaseServiceImpl implements IPostService {
                     maxPatch = resultSet.getString("Max_patch");
                 }
             }
-            System.out.println("Получили maxPatch = " + maxPatch);
+            // System.out.println("Получили maxPatch = " + maxPatch);
 
             String resultPatch;
             if (maxPatch != null) {
-                System.out.println("maxPatch != null");
+                // System.out.println("maxPatch != null");
                 resultPatch = incPatch(maxPatch);
             } else {
-                System.out.println("maxPatch == null");
+                // System.out.println("maxPatch == null");
                 resultPatch = parentPatch + "0001";
             }
-            System.out.println("Получили resultPatch = " + resultPatch);
+            // System.out.println("Получили resultPatch = " + resultPatch);
 
             String query = new StringBuilder("INSERT INTO ")
                     .append(tableName)
@@ -126,11 +125,21 @@ public class PostServiceImpl extends BaseServiceImpl implements IPostService {
                 LOGGER.error(e.getMessage());
                 return new DBResponse(Status.NOT_FOUND);
             }
+
+            query = "INSERT INTO UsersOfForum(forum, email) VALUES (?, ?)";
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setString(1, post.getForum().toString());
+                ps.setString(2, post.getUser().toString());
+                ps.executeUpdate();
+            } catch (SQLException e) {
+
+            }
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return new DBResponse(Status.INVALID_REQUEST);
         }
-        System.out.println("Post создан\n\n");
+        // System.out.println("Post создан\n\n");
         return new DBResponse(Status.OK, post);
     }
 
